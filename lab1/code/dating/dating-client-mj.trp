@@ -1,0 +1,30 @@
+import lists
+
+let
+  fun myAgent otherProfile =
+  let
+    val releasedProfile = ("mj", "MJ", (), true, ["music", "comic books"])
+  in
+    (true, releasedProfile)
+  end
+
+  fun client () =
+    let
+      val myProfile = ("mj", "MJ", 2002, true, ["music", "comic books"])
+      val server = whereis ("@server", "datingServer")
+      val _ = send (server, ("NEWPROFILE", (myProfile, myAgent, self ())))
+      val _ = printString "Profile sent"
+    in
+      receive [
+        hn ("NEWMATCH", profile) =>
+          let
+            val _ = printString "Got a new match!"
+            val _ = print profile
+          in
+            ()
+          end
+      ]
+    end
+in
+  client ()
+end
