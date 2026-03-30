@@ -1,25 +1,59 @@
-(* Starting file for the server *)
-
 import lists
-let fun server () = (* TODO: finish this *)
-         let val _ = receive [hn ("NEWPROFILE", _ )
-                                => printString "New profile received"
-                             ]
-         in server ()
-         end
 
-    (* Our main function starts the server and then requests the
-       dispatcher to send some clients this way. *)
+let
+  fun server () =
+    let
+      fun tryMatchOne newEntry oldEntry =
+        let
+          val (newProfile, newAgent, newPid) = newEntry
+          val (oldProfile, oldAgent, oldPid) = oldEntry
 
-    fun main () =       
-        let val thisNode = node (self ())
-            val _ = printString ("Running node with identifier: " ^ thisNode)
-            val _ =  register ("datingServer", spawn server, authority)
-        in  (* TODO: Feel free to comment out the next line
-                     while you develop your solution and work on a few 
-                     custom clients;  *)
-            send (whereis ("@dispatcher", "dispatcher"), ("DISPATCH", thisNode)); 
-            ()
+          (* later:
+             val (newLikesOld, newProfileForOld) = newAgent oldProfile
+             val (oldLikesNew, oldProfileForNew) = oldAgent newProfile
+             if both say yes, send NEWMATCH messages
+          *)
+          val _ = printString "TODO: compare profiles"
+        in
+          ()
         end
-in main ()
+
+      fun tryMatchAgainstAll newEntry entries =
+        case entries of
+            [] => ()
+          | x :: xs =>
+              let
+                val _ = tryMatchOne newEntry x
+              in
+                tryMatchAgainstAll newEntry xs
+              end
+
+      fun loop entries =
+        receive [
+          hn ("NEWPROFILE", data) =>
+            let
+              val (profile, agent, pid) = data
+              val newEntry = (profile, agent, pid)
+              val _ = printString "New profile received"
+              val _ = print profile
+              val _ = tryMatchAgainstAll newEntry entries
+            in
+              loop (newEntry :: entries)
+            end
+        ]
+    in
+      loop []
+    end
+
+  fun main () =
+    let
+      val thisNode = node (self ())
+      val _ = printString ("Running node with identifier: " ^ thisNode)
+      val _ = register ("datingServer", spawn server, authority)
+    in
+      send (whereis ("@server", "datingServer"), ("SERVER", thisNode));
+      ()
+    end
+in
+  main ()
 end
