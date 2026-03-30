@@ -7,15 +7,19 @@ let
         let
           val (newProfile, newAgent, newPid) = newEntry
           val (oldProfile, oldAgent, oldPid) = oldEntry
-
-          (* later:
-             val (newLikesOld, newProfileForOld) = newAgent oldProfile
-             val (oldLikesNew, oldProfileForNew) = oldAgent newProfile
-             if both say yes, send NEWMATCH messages
-          *)
-          val _ = printString "TODO: compare profiles"
+          val (newPref, newSendProfile) = newAgent oldProfile
+          val (oldPref, oldSendProfile) = oldAgent newProfile
         in
-          ()
+          if oldPref andalso newPref
+          then
+            let
+              val _ = send (oldPid, ("NEWMATCH", newSendProfile))
+              val _ = send (newPid, ("NEWMATCH", oldSendProfile))
+            in
+              ()
+            end
+          else
+            ()
         end
 
       fun tryMatchAgainstAll newEntry entries =

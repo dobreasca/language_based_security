@@ -5,7 +5,7 @@ let
   let
     val releasedProfile = ("peter", "Peter", (), false, ["chemistry", "parkour"])
   in
-    (true, releasedProfile)
+    (false, ())
   end
 
   fun client () =
