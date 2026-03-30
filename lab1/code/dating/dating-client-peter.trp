@@ -3,14 +3,26 @@ import lists
 let
   fun myAgent otherProfile =
   let
-    val releasedProfile = ("peter", "Peter", (), false, ["chemistry", "parkour"])
+    val (otherLabel, otherName, _, _, _) = otherProfile
   in
-    (false, ())
+    if otherName="MJ"
+    then
+      let
+        val releasedProfile = ("peter", "Peter", (), false, ["chemistry", "parkour", "music"]) raisedTo otherLabel
+      in
+        (true, releasedProfile)
+      end
+    else
+      (false, ())
   end
 
   fun client () =
     let
-      val myProfile = ("peter", "Peter", 2002, false, ["chemistry", "parkour"])
+      val myName = "Peter" raisedTo "peter"
+      val myBirthYear = 2002 raisedTo "peter"
+      val myGender = false raisedTo "peter"
+      val myInterests = ["chemistry", "parkour", "music"] raisedTo "peter"
+      val myProfile = ("peter", "Peter", 2002, false, ["chemistry", "parkour", "music"])
       val server = whereis ("@server", "datingServer")
       val _ = send (server, ("NEWPROFILE", (myProfile, myAgent, self ())))
       val _ = printString "Profile sent"
