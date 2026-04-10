@@ -3,28 +3,45 @@ import lists
 let
   fun myAgent otherProfile =
   let
-    val (otherLabel, otherName, _, _, _) = otherProfile
+    val (otherLabel, otherName, otherYear, otherGender, otherInterests) = otherProfile
+    val myName = "Peter" raisedTo `{peter}`
+    val myBirthYear = 2002 raisedTo `{peter}`
+    val myGender = false raisedTo `{peter}`
+    val myInterests = ["chemistry", "parkour", "music"] raisedTo `{peter}`
   in
     if otherName="MJ"
     then
       let
-        val releasedProfile = ("peter", "Peter", (), false, ["chemistry", "parkour", "music"]) raisedTo otherLabel
+        val myNameForOther = declassify (myName, authority, otherLabel)
+        val myBirthYearForOther = declassify (myBirthYear, authority, otherLabel)
+        val myGenderForOther = declassify (myGender, authority, otherLabel)
+        val myInterestsForOther = declassify (myInterests, authority, otherLabel)
+        val myProfileForOther = (`{peter}`, myNameForOther, myBirthYearForOther, myGenderForOther, myInterestsForOther)
       in
-        (true, releasedProfile)
+        (declassify (true, authority, otherLabel), myProfileForOther)
       end
     else
-      (false, ())
+      (declassify (false, authority, otherLabel), ())
   end
+
+  fun sendToServer server profile agent pid =
+    send (server, ("NEWPROFILE", (profile, agent, pid)))
 
   fun client () =
     let
-      val myName = "Peter" raisedTo "peter"
-      val myBirthYear = 2002 raisedTo "peter"
-      val myGender = false raisedTo "peter"
-      val myInterests = ["chemistry", "parkour", "music"] raisedTo "peter"
-      val myProfile = ("peter", "Peter", 2002, false, ["chemistry", "parkour", "music"])
+      val myName = "Peter" raisedTo `{peter}`
+      val myBirthYear = 2002 raisedTo `{peter}`
+      val myGender = false raisedTo `{peter}`
+      val myInterests = ["chemistry", "parkour", "music"] raisedTo `{peter}`
+      val myProfile = (`{peter}`, myName, myBirthYear, myGender, myInterests)
       val server = whereis ("@server", "datingServer")
-      val _ = send (server, ("NEWPROFILE", (myProfile, myAgent, self ())))
+      val me = self ()
+      val myNameForServer = declassify (myName, authority, `{server}`)
+      val myBirthYearForServer = declassify (myBirthYear, authority, `{server}`)
+      val myGenderForServer = declassify (myGender, authority, `{server}`)
+      val myInterestsForServer = declassify (myInterests, authority, `{server}`)
+      val serverProfile = (`{peter}`, myNameForServer, myBirthYearForServer, myGenderForServer, myInterestsForServer)
+      val _ = spawn (fn () => sendToServer server serverProfile myAgent me)
       val _ = printString "Profile sent"
     in
       receive [

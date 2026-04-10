@@ -3,18 +3,23 @@ import lists
 let
   fun server () =
     let
+      fun sendMatch pid profile =
+        send (pid, ("NEWMATCH", profile))
+
       fun tryMatchOne newEntry oldEntry =
         let
           val (newProfile, newAgent, newPid) = newEntry
           val (oldProfile, oldAgent, oldPid) = oldEntry
-          val (newPref, newSendProfile) = newAgent oldProfile
-          val (oldPref, oldSendProfile) = oldAgent newProfile
+          val (newPrefHigh, newSendProfile) = newAgent oldProfile
+          val (oldPrefHigh, oldSendProfile) = oldAgent newProfile
+          val newPref = declassify (newPrefHigh, authority, `{}`)
+          val oldPref = declassify (oldPrefHigh, authority, `{}`)
         in
           if oldPref andalso newPref
           then
             let
-              val _ = send (oldPid, ("NEWMATCH", newSendProfile))
-              val _ = send (newPid, ("NEWMATCH", oldSendProfile))
+              val _ = spawn (fn () => sendMatch oldPid newSendProfile)
+              val _ = spawn (fn () => sendMatch newPid oldSendProfile)
             in
               ()
             end
