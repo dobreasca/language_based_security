@@ -10,10 +10,21 @@ let
         let
           val (newProfile, newAgent, newPid) = newEntry
           val (oldProfile, oldAgent, oldPid) = oldEntry
-          val (newPrefHigh, newSendProfile) = newAgent oldProfile
-          val (oldPrefHigh, oldSendProfile) = oldAgent newProfile
+
+          val newResTainted = let pini authority val r = newAgent oldProfile in r end
+          val oldResTainted = let pini authority val r = oldAgent newProfile in r end
+
+          val newResClean = declassify (newResTainted, authority, `{}`)
+          val oldResClean = declassify (oldResTainted, authority, `{}`)
+
+          val (newPrefHigh, newSendProfileHigh) = newResClean
+          val (oldPrefHigh, oldSendProfileHigh) = oldResClean
+          
           val newPref = declassify (newPrefHigh, authority, `{}`)
           val oldPref = declassify (oldPrefHigh, authority, `{}`)
+          
+          val newSendProfile = declassify (newSendProfileHigh, authority, `{}`)
+          val oldSendProfile = declassify (oldSendProfileHigh, authority, `{}`)
         in
           if oldPref andalso newPref
           then
@@ -38,18 +49,19 @@ let
               end
 
       fun loop entries =
-        receive [
-          hn ("NEWPROFILE", data) =>
-            let
-              val (profile, agent, pid) = data
-              val newEntry = (profile, agent, pid)
-              val _ = printString "New profile received"
-              val _ = print profile
-              val _ = tryMatchAgainstAll newEntry entries
-            in
-              loop (newEntry :: entries)
-            end
-        ]
+        let
+          val data = let pini authority
+                       val d = receive [ hn ("NEWPROFILE", msg) => msg ]
+                     in d end
+                     
+          val (profile, agent, pid) = data
+          val newEntry = (profile, agent, pid)
+          val _ = printString "New profile received"
+          val _ = print profile
+          val _ = tryMatchAgainstAll newEntry entries
+        in
+          loop (newEntry :: entries)
+        end
     in
       loop []
     end
