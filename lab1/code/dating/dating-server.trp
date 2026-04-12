@@ -61,6 +61,7 @@ let
       val _ = register ("datingServer", spawn server, authority)
     in
       send (whereis ("@server", "datingServer"), ("SERVER", thisNode));
+      send (whereis ("@dispatcher", "dispatcher"), ("DISPATCH", thisNode)); 
       ()
     end
 in

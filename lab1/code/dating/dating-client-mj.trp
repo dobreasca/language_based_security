@@ -9,7 +9,7 @@ let
     val myGender = true raisedTo `{mj}`
     val myInterests = ["music", "comic books"] raisedTo `{mj}`
   in
-    if elem "music" otherInterests andalso otherGender=true
+    if elem "music" otherInterests andalso otherGender=false
     then
       let
         val myNameForOther = declassify (myName, authority, otherLabel)
@@ -33,7 +33,6 @@ let
       val myBirthYear = 2002 raisedTo `{mj}`
       val myGender = true raisedTo `{mj}`
       val myInterests = ["music", "comic books"] raisedTo `{mj}`
-      val myProfile = (`{mj}`, myName, myBirthYear, myGender, myInterests)
       val server = whereis ("@server", "datingServer")
       val me = self ()
       val myNameForServer = declassify (myName, authority, `{server}`)

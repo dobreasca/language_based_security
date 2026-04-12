@@ -33,7 +33,6 @@ let
       val myBirthYear = 2002 raisedTo `{peter}`
       val myGender = false raisedTo `{peter}`
       val myInterests = ["chemistry", "parkour", "music"] raisedTo `{peter}`
-      val myProfile = (`{peter}`, myName, myBirthYear, myGender, myInterests)
       val server = whereis ("@server", "datingServer")
       val me = self ()
       val myNameForServer = declassify (myName, authority, `{server}`)
