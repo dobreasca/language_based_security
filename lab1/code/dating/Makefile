@@ -13,3 +13,7 @@ dating-client-peter:
 dating-client-echo:
 	$(TROUPE)/bin/troupec dating-client-echo.trp -o ./out/dating-client-echo.js
 	node $(TROUPE)/rt/built/troupe.js -f=./out/dating-client-echo.js --id=../ids/id-echo.json --trustmap=../trustmaps/echo.json --aliases=aliases.json
+
+dating-client-goblin:
+	$(TROUPE)/bin/troupec dating-client-goblin.trp -o ./out/dating-client-goblin.js
+	node $(TROUPE)/rt/built/troupe.js -f=./out/dating-client-goblin.js --id=../ids/id-goblin.json --trustmap=../trustmaps/goblin.json --aliases=aliases.json

@@ -57,7 +57,6 @@ let
           val (profile, agent, pid) = data
           val newEntry = (profile, agent, pid)
           val _ = printString "New profile received"
-          val _ = print profile
           val _ = tryMatchAgainstAll newEntry entries
         in
           loop (newEntry :: entries)
