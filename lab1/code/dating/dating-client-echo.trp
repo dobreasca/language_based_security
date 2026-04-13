@@ -28,14 +28,10 @@ let
       val myBirthYear = 1990 raisedTo `{echo}`
       val myGender = false raisedTo `{echo}`
       val myInterests = ["chemistry", "music", "war"] raisedTo `{echo}`
+      val myProfile = (`{echo}`, myName, myBirthYear, myGender, myInterests)
       val server = whereis ("@server", "datingServer")
       val me = self ()
-      val myNameForServer = declassify (myName, authority, `{server}`)
-      val myBirthYearForServer = declassify (myBirthYear, authority, `{server}`)
-      val myGenderForServer = declassify (myGender, authority, `{server}`)
-      val myInterestsForServer = declassify (myInterests, authority, `{server}`)
-      val serverProfile = (`{echo}`, myNameForServer, myBirthYearForServer, myGenderForServer, myInterestsForServer)
-      val _ = spawn (fn () => sendToServer server serverProfile myAgent me)
+      val _ = spawn (fn () => sendToServer server myProfile myAgent me)
       val _ = printString "Profile sent"
     in
       waitForMatches ()

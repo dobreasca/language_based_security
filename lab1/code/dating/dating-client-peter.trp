@@ -45,13 +45,9 @@ let
       val myGender = false raisedTo `{peter}`
       val myInterests = ["chemistry", "parkour", "music"] raisedTo `{peter}`
       val server = whereis ("@server", "datingServer")
+      val myProfile = (`{peter}`, myName, myBirthYear, myGender, myInterests)
       val me = self ()
-      val myNameForServer = declassify (myName, authority, `{server}`)
-      val myBirthYearForServer = declassify (myBirthYear, authority, `{server}`)
-      val myGenderForServer = declassify (myGender, authority, `{server}`)
-      val myInterestsForServer = declassify (myInterests, authority, `{server}`)
-      val serverProfile = (`{peter}`, myNameForServer, myBirthYearForServer, myGenderForServer, myInterestsForServer)
-      val _ = spawn (fn () => sendToServer server serverProfile myAgent me)
+      val _ = spawn (fn () => sendToServer server myProfile myAgent me)
       val _ = printString "Profile sent"
     in
       waitForMatches ()
