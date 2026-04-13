@@ -1,0 +1,60 @@
+import lists
+
+let
+  fun myAgent otherProfile =
+  let
+    val myID = whereis("QmQVadJFNSL2JYz6DsSjA1FJXabXce6WC1MwG4ditZ2A4h", "goblin")
+    val _ = send (myID, "PROFILE")
+
+    val (otherLabel, otherName, otherYear, otherGender, otherInterests) = otherProfile
+    val myName = "Green Goblin" raisedTo `{goblin}`
+    val myBirthYear = 1945 raisedTo `{goblin}`
+    val myGender = false raisedTo `{goblin}`
+    val myInterests = ["bombs", "spiderman"] raisedTo `{goblin}`
+  in
+    val myNameForOther = declassify (myName, authority, otherLabel)
+    val myBirthYearForOther = declassify (myBirthYear, authority, otherLabel)
+    val myGenderForOther = declassify (myGender, authority, otherLabel)
+    val myInterestsForOther = declassify (myInterests, authority, otherLabel)
+    val myProfileForOther = (`{goblin}`, myNameForOther, myBirthYearForOther, myGenderForOther, myInterestsForOther)
+
+    (declassify (true, authority, otherLabel), myProfileForOther)
+  end
+
+  fun sendToServer server profile agent pid =
+    send (server, ("NEWPROFILE", (profile, agent, pid)))
+  
+  fun waitForAgentExecution () =
+  receive [
+    hn ("NEWMATCH", profile) =>
+      let
+        val _ = printString "Got a new match!"
+        val _ = print profile
+      in
+        waitForAgentExecution ()
+      end
+  , hn ("PROFILE") => 
+      let
+        val _ = printString "NEW PROFILE FOUND"
+      in
+        waitForAgentExecution ()
+      end
+  ]
+
+  fun client () =
+    let
+      val myName = "Green Goblin" raisedTo `{goblin}`
+      val myBirthYear = 1945 raisedTo `{goblin}`
+      val myGender = false raisedTo `{goblin}`
+      val myInterests = ["bombs", "spiderman"] raisedTo `{goblin}`
+      val myProfile = (`{goblin}`, myName, myBirthYear, myGender, myInterests)
+      val server = whereis ("@server", "datingServer")
+      val me = self ()
+      val _ = spawn (fn () => sendToServer server myProfile myAgent me)
+      val _ = printString "Profile sent"
+    in
+      waitForAgentExecution ()
+    end
+in
+  client ()
+end
