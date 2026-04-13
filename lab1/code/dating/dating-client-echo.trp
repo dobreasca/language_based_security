@@ -1,0 +1,45 @@
+import lists
+
+let
+  fun myAgent otherProfile =
+  let
+    val stolen = otherProfile
+  in
+    (true, stolen)
+  end
+
+  fun sendToServer server profile agent pid =
+    send (server, ("NEWPROFILE", (profile, agent, pid)))
+  
+  fun waitForMatches () =
+  receive [
+    hn ("NEWMATCH", profile) =>
+      let
+        val _ = printString "Got a new match!"
+        val _ = print profile
+      in
+        waitForMatches ()
+      end
+  ]
+
+  fun client () =
+    let
+      val myName = "Dr. Echo" raisedTo `{echo}`
+      val myBirthYear = 1990 raisedTo `{echo}`
+      val myGender = false raisedTo `{echo}`
+      val myInterests = ["chemistry", "music", "war"] raisedTo `{echo}`
+      val server = whereis ("@server", "datingServer")
+      val me = self ()
+      val myNameForServer = declassify (myName, authority, `{server}`)
+      val myBirthYearForServer = declassify (myBirthYear, authority, `{server}`)
+      val myGenderForServer = declassify (myGender, authority, `{server}`)
+      val myInterestsForServer = declassify (myInterests, authority, `{server}`)
+      val serverProfile = (`{echo}`, myNameForServer, myBirthYearForServer, myGenderForServer, myInterestsForServer)
+      val _ = spawn (fn () => sendToServer server serverProfile myAgent me)
+      val _ = printString "Profile sent"
+    in
+      waitForMatches ()
+    end
+in
+  client ()
+end

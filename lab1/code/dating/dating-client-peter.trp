@@ -9,7 +9,7 @@ let
     val myGender = false raisedTo `{peter}`
     val myInterests = ["chemistry", "parkour", "music"] raisedTo `{peter}`
   in
-    if otherName="MJ"
+    if otherGender=true
     then
       let
         val myNameForOther = declassify (myName, authority, otherLabel)
@@ -26,6 +26,17 @@ let
 
   fun sendToServer server profile agent pid =
     send (server, ("NEWPROFILE", (profile, agent, pid)))
+  
+  fun waitForMatches () =
+  receive [
+    hn ("NEWMATCH", profile) =>
+      let
+        val _ = printString "Got a new match!"
+        val _ = print profile
+      in
+        waitForMatches ()
+      end
+  ]
 
   fun client () =
     let
@@ -43,15 +54,7 @@ let
       val _ = spawn (fn () => sendToServer server serverProfile myAgent me)
       val _ = printString "Profile sent"
     in
-      receive [
-        hn ("NEWMATCH", profile) =>
-          let
-            val _ = printString "Got a new match!"
-            val _ = print profile
-          in
-            ()
-          end
-      ]
+      waitForMatches ()
     end
 in
   client ()
