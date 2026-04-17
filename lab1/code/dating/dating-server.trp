@@ -23,14 +23,12 @@ let
           val newPref = declassify (newPrefHigh, authority, `{}`)
           val oldPref = declassify (oldPrefHigh, authority, `{}`)
           
-          val newSendProfile = declassify (newSendProfileHigh, authority, `{}`)
-          val oldSendProfile = declassify (oldSendProfileHigh, authority, `{}`)
         in
           if oldPref andalso newPref
           then
             let
-              val _ = spawn (fn () => sendMatch oldPid newSendProfile)
-              val _ = spawn (fn () => sendMatch newPid oldSendProfile)
+              val _ = spawn (fn () => sendMatch oldPid newSendProfileHigh)
+              val _ = spawn (fn () => sendMatch newPid oldSendProfileHigh)
             in
               ()
             end
