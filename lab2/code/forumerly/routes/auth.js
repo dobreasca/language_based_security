@@ -13,7 +13,7 @@ function validatePassword(req, res, next) {
 
   //console.log(pass, name)
   // validate password
-  if (pass.match(name)) {
+  if (pass.includes(name)) {
     req.flash('error', 'Do not include name in password.')
     req.flash('message', 'Do not include name in password.')
     return res.redirect('/register')
