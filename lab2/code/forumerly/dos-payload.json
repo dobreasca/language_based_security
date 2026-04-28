@@ -1,0 +1,8 @@
+[
+  {
+    "lcUsername": "admin",
+    "__proto__": {
+      "toString": "boom"
+    }
+  }
+]
