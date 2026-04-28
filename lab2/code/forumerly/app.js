@@ -45,10 +45,30 @@ app
     resave: false,
     saveUninitialized: false
   }))
+  /*
   .use(helmet.contentSecurityPolicy({
     directives: {
       defaultSrc: ["'self'"],
       scriptSrc: ["'self'", "use.fontawesome.com", "ajax.googleapis.com", "cdnjs.cloudflare.com"]
+    }
+  })) */
+  .use((req, res, next) => {
+    res.setHeader('X-Content-Type-Options', 'nosniff')
+    next()
+  })
+  .use(helmet.contentSecurityPolicy({
+    directives: {
+      defaultSrc: ["'self'"],
+      scriptSrc: ["'self'", "use.fontawesome.com", "ajax.googleapis.com", "cdnjs.cloudflare.com"],
+      scriptSrcAttr: ["'none'"],
+      objectSrc: ["'none'"],
+      baseUri: ["'self'"],
+      frameAncestors: ["'self'"],
+      imgSrc: ["'self'", "data:"],
+      fontSrc: ["'self'", "https:", "data:"],
+      styleSrc: ["'self'", "https:", "'unsafe-inline'"],
+      formAction: ["'self'"],
+      upgradeInsecureRequests: []
     }
   }))
   .use(passport.initialize())

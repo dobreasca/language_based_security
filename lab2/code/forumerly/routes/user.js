@@ -7,7 +7,22 @@ const fs = require('fs')
 
 // File upload middleware (for profile pictures)
 const multer = require('multer')
-const upload = multer({dest: 'public/images/profileImages', limits: {fileSize: 2000000}})
+const path = require('path')
+
+//const upload = multer({dest: 'public/images/profileImages', limits: {fileSize: 2000000}})
+const allowedImageTypes = ['image/png', 'image/jpeg', 'image/gif']
+
+const upload = multer({
+  dest: 'public/images/profileImages',
+  limits: { fileSize: 2000000 },
+  fileFilter: (req, file, cb) => {
+    if (!allowedImageTypes.includes(file.mimetype)) {
+      return cb(new Error('Only PNG, JPEG, and GIF images are allowed'), false)
+    }
+
+    cb(null, true)
+  }
+})
 const uploadUsers = multer({storage: multer.memoryStorage(), limits: {fileSize: 2000000}})
 
 moment.tz.setDefault("America/New_York") // All formated times will be in this timezone by default
@@ -243,7 +258,7 @@ router
         }
       })
   })
-
+  /*
   // POST route for profile picture upload
   .post('/upload', upload.single('avatar'), (req, res) => {
     // Validate file path
@@ -262,7 +277,52 @@ router
           })
       })
   })
+  */
+  .post('/upload', loginRequired, (req, res) => {
+    upload.single('avatar')(req, res, (err) => {
+      if (err) {
+        req.flash('error', 'Only PNG, JPEG, and GIF images are allowed.')
+        return res.redirect('back')
+      }
 
+      if (!req.file) {
+        req.flash('error', 'No valid image was uploaded.')
+        return res.redirect('back')
+      }
+
+      const extByMime = {
+        'image/png': '.png',
+        'image/jpeg': '.jpg',
+        'image/gif': '.gif'
+      }
+
+      const ext = extByMime[req.file.mimetype]
+
+      if (!ext) {
+        fs.unlink(req.file.path, () => {})
+        req.flash('error', 'Only PNG, JPEG, and GIF images are allowed.')
+        return res.redirect('back')
+      }
+
+      const safeFilename = req.user.username + ext
+      const newPath = path.join(req.file.destination, safeFilename)
+
+      fs.rename(req.file.path, newPath, (err) => {
+        if (err) throw err
+
+        mongo.db.collection('users')
+          .updateOne({ username: req.user.username }, {
+            $set: { img: '/images/profileImages/' + safeFilename }
+          }, (err, result) => {
+            if (err) {
+              throw err
+            }
+
+            res.redirect('back')
+          })
+      })
+    })
+  })
   .get('/download/users', adminRequired, (req, res) => {
     mongo.db.collection('users')
       .find().toArray(function(err, result) {

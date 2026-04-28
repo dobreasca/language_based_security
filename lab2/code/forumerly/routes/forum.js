@@ -1,3 +1,12 @@
+const sanitizeHtml = require('sanitize-html')
+
+function sanitizeUserHtml(input) {
+  return sanitizeHtml(input || '', {
+    allowedTags: [],
+    allowedAttributes: {}
+  })
+}
+
 // Routes for topic and threads pages
 const express = require('express')
 const router = express.Router()
@@ -158,15 +167,21 @@ router
   // POST new reply to specified thread id
   .post('/createReply/:id', loginRequired, (req, res) => {
     var date = new Date()
-
+    /*
     var newReply = {
       posterUsername: req.user.username,
       posterImg: req.user.img,
       parentThreadID: new ObjectID.createFromHexString(req.params.id),
       message: req.body.message,
       creationDate: date
+    }*/
+    var newReply = {
+      posterUsername: req.user.username,
+      posterImg: req.user.img,
+      parentThreadID: new ObjectID.createFromHexString(req.params.id),
+      message: sanitizeUserHtml(req.body.message),
+      creationDate: date
     }
-
     if (req.user.admin) {
       newReply.posterIsAdmin = true
     }else {
@@ -217,11 +232,12 @@ router
                 thread.lcCategory = thread.category.toLowerCase()
                 thread.lcTopic = thread.topic
                 thread.topic = thread.topic.capitalizeFirstLetter()
+                /*
                 thread.body = thread.body
                   .replace('<script', '')
                   .replace('<img', '')
                   .replace('<svg', '')
-                  .replace('javascript:', '')
+                  .replace('javascript:', '')*/
 
                 if (thread.subject.length > 18) {
                   thread.browserTitle = thread.subject.slice(0, 15) + '...'
@@ -242,12 +258,23 @@ router
   // POST new thread
   .post('/createThread', loginRequired, (req, res) => {
     var date = new Date()
-
+    /*
     var newThread = {
       posterUsername: req.user.username,
       topic: req.query.topic,
       subject: req.body.subject,
       body: req.body.body,
+      creationDate: date,
+      lastPostBy: req.user.username,
+      lastPostDate: date,
+      numReplies: 0,
+      replies: []
+    }*/
+    var newThread = {
+      posterUsername: req.user.username,
+      topic: req.query.topic,
+      subject: sanitizeUserHtml(req.body.subject),
+      body: sanitizeUserHtml(req.body.body),
       creationDate: date,
       lastPostBy: req.user.username,
       lastPostDate: date,
