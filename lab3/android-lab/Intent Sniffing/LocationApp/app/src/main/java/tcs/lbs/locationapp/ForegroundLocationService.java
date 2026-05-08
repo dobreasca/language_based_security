@@ -151,6 +151,10 @@ public class ForegroundLocationService extends Service implements LocationListen
         locationAppIntent.putExtra("Location", _location);
         weatherIntent.putExtra("Location", _location);
 
+        // THE FIX
+        locationAppIntent.setPackage(getPackageName());
+        weatherIntent.setPackage("tcs.lbs.weather_app");
+
         // Send intra-app broadcast to MainActivity
         sendBroadcast(locationAppIntent);
 
