@@ -26,9 +26,6 @@ public class MainActivity extends AppCompatActivity
         LatitudeTextView = findViewById(R.id.LatitudeTextView);
         LongitudeTextView = findViewById(R.id.LongitudeTextView);
 
-
-        // TODO Register to receive broadcast messages from ForegroundLocationService of the LocationApp
-        // TODO Extract Location coordinates from the broadcast message and show them in LatitudeTextView and LongitudeTextView
     }
 
     @Override
