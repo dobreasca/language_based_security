@@ -17,6 +17,7 @@ import android.webkit.JavascriptInterface;
 import android.webkit.WebResourceRequest;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
+import android.widget.Toast;
 
 import androidx.core.app.ActivityCompat;
 import androidx.core.app.NotificationCompat;
@@ -70,11 +71,21 @@ public class WalletActivity extends Activity {
         });
 
         String deepLinkUrl = null;
+        String safeUrl = DEFAULT_URL;
         if (getIntent() != null && getIntent().getData() != null) {
             deepLinkUrl = getIntent().getData().getQueryParameter("url");
+
+            if (deepLinkUrl != null) {
+                if (deepLinkUrl.startsWith("https://wallet.lbswallet.com/")) {
+                    safeUrl = deepLinkUrl;
+                } else {
+                    Toast.makeText(this, "Security Alert: Blocked an untrusted link.", Toast.LENGTH_LONG).show();
+                }
+            }
+
         }
 
-        webView.loadUrl(deepLinkUrl != null ? deepLinkUrl : DEFAULT_URL);
+        webView.loadUrl(safeUrl);
     }
 
     private void loadStateFromPreferences() {
