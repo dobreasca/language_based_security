@@ -1,0 +1,55 @@
+--------- beginning of main
+05-11 13:42:10.717 15030 15030 D AppLog  : User:001 ; Type:new_msg ; Message:hello again ; MessageID:11 ; Time:13:42:10.714443
+05-11 13:42:11.444 15030 15894 D AppLog  : User:001 ; Type:server_ack ; Message:hello again ; MessageID:11 ; Time:13:42:11.444188
+05-11 13:42:11.759 15030 15894 D AppLog  : User:001 ; Type:receiver_ack ; Message:hello again ; MessageID:11 ; Time:13:42:11.759854
+05-11 13:42:29.936 15030 15030 D AppLog  : User:001 ; Type:new_msg ; Message:I am pleased to make your acquittance  ; MessageID:13 ; Time:13:42:29.932899
+05-11 13:42:30.670 15030 15894 D AppLog  : User:001 ; Type:server_ack ; Message:I am pleased to make your acquittance  ; MessageID:13 ; Time:13:42:30.670228
+05-11 13:42:31.005 15030 15894 D AppLog  : User:001 ; Type:receiver_ack ; Message:I am pleased to make your acquittance  ; MessageID:13 ; Time:13:42:31.005429
+05-11 13:42:42.675 15030 15030 D AppLog  : User:001 ; Type:new_msg ; Message:do you want to tell me more about yourself ; MessageID:15 ; Time:13:42:42.674540
+05-11 13:42:43.431 15030 15894 D AppLog  : User:001 ; Type:server_ack ; Message:do you want to tell me more about yourself ; MessageID:15 ; Time:13:42:43.431708
+05-11 13:42:43.724 15030 15894 D AppLog  : User:001 ; Type:receiver_ack ; Message:do you want to tell me more about yourself ; MessageID:15 ; Time:13:42:43.724042
+05-11 13:43:31.641 15030 15030 D AppLog  : User:001 ; Type:new_msg ; Message:my name is ana ; MessageID:17 ; Time:13:43:31.637788
+05-11 13:43:32.416 15030 15894 D AppLog  : User:001 ; Type:server_ack ; Message:my name is ana ; MessageID:17 ; Time:13:43:32.416383
+05-11 13:43:32.727 15030 15894 D AppLog  : User:001 ; Type:receiver_ack ; Message:my name is ana ; MessageID:17 ; Time:13:43:32.727438
+05-11 13:44:18.280 15030 15030 D AppLog  : User:002 ; Type:new_msg ; Message:hi ; MessageID:1 ; Time:13:44:18.278225
+05-11 13:44:18.514 15030 15030 D AppLog  : User:002 ; Type:new_msg ; Message: ; MessageID:2 ; Time:13:44:18.512556
+05-11 13:44:18.750 15030 16035 D AppLog  : User:002 ; Type:server_ack ; Message:hi ; MessageID:1 ; Time:13:44:18.750656
+05-11 13:44:19.044 15030 16035 D AppLog  : User:002 ; Type:server_ack ; Message: ; MessageID:2 ; Time:13:44:19.043891
+05-11 13:44:19.055 15030 16035 D AppLog  : User:002 ; Type:receiver_ack ; Message:hi ; MessageID:1 ; Time:13:44:19.055033
+05-11 13:44:19.356 15030 16035 D AppLog  : User:002 ; Type:receiver_ack ; Message: ; MessageID:2 ; Time:13:44:19.355907
+05-11 13:44:34.679 15030 15030 D AppLog  : User:002 ; Type:new_msg ; Message:what is ur name ; MessageID:5 ; Time:13:44:34.677600
+05-11 13:44:35.117 15030 16035 D AppLog  : User:002 ; Type:server_ack ; Message:what is ur name ; MessageID:5 ; Time:13:44:35.117456
+05-11 13:44:35.405 15030 16035 D AppLog  : User:002 ; Type:receiver_ack ; Message:what is ur name ; MessageID:5 ; Time:13:44:35.405756
+05-11 13:44:45.003 15030 15030 D AppLog  : User:002 ; Type:new_msg ; Message:where are u from ; MessageID:7 ; Time:13:44:45.003127
+05-11 13:44:45.557 15030 16035 D AppLog  : User:002 ; Type:server_ack ; Message:where are u from ; MessageID:7 ; Time:13:44:45.557525
+05-11 13:44:45.867 15030 16035 D AppLog  : User:002 ; Type:receiver_ack ; Message:where are u from ; MessageID:7 ; Time:13:44:45.867003
+05-11 13:44:56.043 15030 15030 D AppLog  : User:002 ; Type:new_msg ; Message:oh why ; MessageID:9 ; Time:13:44:56.042442
+05-11 13:44:56.550 15030 16035 D AppLog  : User:002 ; Type:server_ack ; Message:oh why ; MessageID:9 ; Time:13:44:56.549978
+05-11 13:44:56.849 15030 16035 D AppLog  : User:002 ; Type:receiver_ack ; Message:oh why ; MessageID:9 ; Time:13:44:56.848868
+05-11 13:45:19.812 15030 15030 D AppLog  : User:003 ; Type:new_msg ; Message:hi kaelen ; MessageID:1 ; Time:13:45:19.811601
+05-11 13:45:20.217 15030 15030 D AppLog  : User:003 ; Type:new_msg ; Message: ; MessageID:2 ; Time:13:45:20.216082
+05-11 13:45:20.859 15030 16035 D AppLog  : User:003 ; Type:server_ack ; Message:hi kaelen ; MessageID:1 ; Time:13:45:20.859388
+05-11 13:45:21.054 15030 16035 D AppLog  : User:003 ; Type:receiver_ack ; Message:hi kaelen ; MessageID:1 ; Time:13:45:21.054676
+05-11 13:45:21.262 15030 16035 D AppLog  : User:003 ; Type:server_ack ; Message: ; MessageID:2 ; Time:13:45:21.262323
+05-11 13:45:21.458 15030 16035 D AppLog  : User:003 ; Type:receiver_ack ; Message: ; MessageID:2 ; Time:13:45:21.458340
+05-11 13:46:26.480 15030 15030 D AppLog  : User:003 ; Type:new_msg ; Message:hello? ; MessageID:3 ; Time:13:46:26.478481
+05-11 13:46:27.457 15030 16035 D AppLog  : User:003 ; Type:server_ack ; Message:hello? ; MessageID:3 ; Time:13:46:27.457673
+05-11 13:46:27.647 15030 16035 D AppLog  : User:003 ; Type:receiver_ack ; Message:hello? ; MessageID:3 ; Time:13:46:27.647191
+05-11 13:47:18.154 16170 16170 D AppLog  : User:003 ; Type:new_msg ; Message:hello ; MessageID:1 ; Time:13:47:18.151960
+05-11 13:47:19.161 16170 16197 D AppLog  : User:003 ; Type:server_ack ; Message:hello ; MessageID:1 ; Time:13:47:19.161074
+05-11 13:47:19.354 16170 16197 D AppLog  : User:003 ; Type:receiver_ack ; Message:hello ; MessageID:1 ; Time:13:47:19.354187
+05-11 13:48:43.751 16170 16170 D AppLog  : User:002 ; Type:new_msg ; Message:hi ; MessageID:1 ; Time:13:48:43.750171
+05-11 13:48:44.236 16170 16197 D AppLog  : User:002 ; Type:server_ack ; Message:hi ; MessageID:1 ; Time:13:48:44.236619
+05-11 13:48:44.549 16170 16197 D AppLog  : User:002 ; Type:receiver_ack ; Message:hi ; MessageID:1 ; Time:13:48:44.549694
+05-11 13:49:06.487 16170 16170 D AppLog  : User:003 ; Type:new_msg ; Message:hello ; MessageID:1 ; Time:13:49:06.484930
+05-11 13:49:07.410 16170 16197 D AppLog  : User:003 ; Type:server_ack ; Message:hello ; MessageID:1 ; Time:13:49:07.409920
+05-11 13:49:07.637 16170 16197 D AppLog  : User:003 ; Type:receiver_ack ; Message:hello ; MessageID:1 ; Time:13:49:07.637107
+05-11 13:50:49.006 16170 16170 D AppLog  : User:003 ; Type:new_msg ; Message:hi? ; MessageID:2 ; Time:13:50:49.004255
+05-11 13:50:50.096 16170 16197 D AppLog  : User:003 ; Type:server_ack ; Message:hi? ; MessageID:2 ; Time:13:50:50.096410
+05-11 13:50:50.297 16170 16197 D AppLog  : User:003 ; Type:receiver_ack ; Message:hi? ; MessageID:2 ; Time:13:50:50.297588
+05-11 13:51:26.961 16170 16170 D AppLog  : User:003 ; Type:new_msg ; Message:hello??? ; MessageID:3 ; Time:13:51:26.959201
+05-11 13:51:28.033 16170 16197 D AppLog  : User:003 ; Type:server_ack ; Message:hello??? ; MessageID:3 ; Time:13:51:28.033761
+05-11 13:51:28.241 16170 16197 D AppLog  : User:003 ; Type:receiver_ack ; Message:hello??? ; MessageID:3 ; Time:13:51:28.241629
+05-11 13:52:30.643 16170 16170 D AppLog  : User:003 ; Type:new_msg ; Message:hola ; MessageID:1 ; Time:13:52:30.642274
+05-11 13:52:31.678 16170 16342 D AppLog  : User:003 ; Type:server_ack ; Message:hola ; MessageID:1 ; Time:13:52:31.678687
+05-11 13:52:31.899 16170 16342 D AppLog  : User:003 ; Type:receiver_ack ; Message:hola ; MessageID:1 ; Time:13:52:31.899701
