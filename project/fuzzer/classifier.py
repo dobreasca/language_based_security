@@ -20,20 +20,19 @@ REJECTION_CODES = {
 
 
 DEFAULT_REJECTION_PATTERNS = [
-    "invalid",
-    "not valid",
-    "please enter",
-    "please provide",
-    "is required",
-    "error",
-    "failed",
-    "failure",
+    "please enter a valid",
+    "please enter an",
+    "is not valid",
+    "not a valid",
+    "invalid email",
+    "required field",
+    "field is required",
+    "validation error",
+    "could not be saved",
+    "cannot be saved",
     "not allowed",
     "forbidden",
-    "denied",
     "alert-danger",
-    "has-error",
-    "form-error",
 ]
 
 

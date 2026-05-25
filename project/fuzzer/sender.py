@@ -1,4 +1,5 @@
 from __future__ import annotations
+from .response_cleaner import clean_response_for_classification
 
 import json
 import time
@@ -269,8 +270,14 @@ def send_payloads(
             )
 
             status_code = response.status_code
+            cleaned_response_text = clean_response_for_classification(
+                response.text,
+                target_type=target_type,
+                mode=payload.mode,
+                field=field,
+            )
 
-            excerpt = response.text.replace("\n", " ").replace("\r", " ")
+            excerpt = cleaned_response_text.replace("\n", " ").replace("\r", " ")
 
         except requests.RequestException as exc:
 
