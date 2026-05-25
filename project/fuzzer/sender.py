@@ -270,7 +270,7 @@ def send_payloads(
 
             status_code = response.status_code
 
-            excerpt = response.text[:5000].replace("\n", " ").replace("\r", " ")
+            excerpt = response.text.replace("\n", " ").replace("\r", " ")
 
         except requests.RequestException as exc:
 

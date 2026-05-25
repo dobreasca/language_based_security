@@ -24,7 +24,6 @@ DEFAULT_REJECTION_PATTERNS = [
     "not valid",
     "please enter",
     "please provide",
-    "required",
     "is required",
     "error",
     "failed",
