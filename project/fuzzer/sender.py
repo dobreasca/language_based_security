@@ -270,11 +270,7 @@ def send_payloads(
 
             status_code = response.status_code
 
-            excerpt = (
-                response.text[:500]
-                .replace("\n", " ")
-                .replace("\r", " ")
-            )
+            excerpt = response.text[:5000].replace("\n", " ").replace("\r", " ")
 
         except requests.RequestException as exc:
 
@@ -288,6 +284,7 @@ def send_payloads(
         outcome, detail = classify_response(
             expected_valid=payload.expected_valid,
             status_code=status_code,
+            response_text=excerpt,
             error=error,
         )
 

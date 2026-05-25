@@ -19,10 +19,55 @@ REJECTION_CODES = {
 }
 
 
+DEFAULT_REJECTION_PATTERNS = [
+    "invalid",
+    "not valid",
+    "please enter",
+    "please provide",
+    "required",
+    "is required",
+    "error",
+    "failed",
+    "failure",
+    "not allowed",
+    "forbidden",
+    "denied",
+    "alert-danger",
+    "has-error",
+    "form-error",
+]
+
+
+DEFAULT_SUCCESS_PATTERNS = [
+    "success",
+    "successful",
+    "successfully",
+    "thank you",
+    "subscribed",
+    "created",
+    "saved",
+    "updated",
+    "alert-success",
+]
+
+
+def contains_any(text: str, patterns: list[str]) -> bool:
+    lowered = text.lower()
+
+    for pattern in patterns:
+        if pattern.lower() in lowered:
+            return True
+
+    return False
+
+
 def classify_response(
     expected_valid: bool,
     status_code: Optional[int],
+    response_text: str = "",
     error: str = "",
+    rejection_patterns: list[str] | None = None,
+    success_patterns: list[str] | None = None,
 ) -> tuple[str, str]:
     if error:
         return "request_error", error
@@ -33,22 +78,38 @@ def classify_response(
     if 500 <= status_code <= 599:
         return "server_error", "Server returned 5xx; possible crash or unhandled edge case"
 
-    accepted = status_code in SUCCESS_CODES or 200 <= status_code <= 299
-    rejected = status_code in REJECTION_CODES or 400 <= status_code <= 499
+    rejection_patterns = rejection_patterns or DEFAULT_REJECTION_PATTERNS
+    success_patterns = success_patterns or DEFAULT_SUCCESS_PATTERNS
+
+    body_says_rejected = contains_any(response_text, rejection_patterns)
+    body_says_success = contains_any(response_text, success_patterns)
+
+    if body_says_rejected and not body_says_success:
+        accepted = False
+        rejected = True
+        signal = "response body contained rejection indicator"
+    elif body_says_success and not body_says_rejected:
+        accepted = True
+        rejected = False
+        signal = "response body contained success indicator"
+    else:
+        accepted = status_code in SUCCESS_CODES or 200 <= status_code <= 299
+        rejected = status_code in REJECTION_CODES or 400 <= status_code <= 499
+        signal = "classified using HTTP status code"
 
     if expected_valid and accepted:
-        return "valid_accepted", "Expected-valid input was accepted"
+        return "valid_accepted", f"Expected-valid input was accepted; {signal}"
 
     if expected_valid and rejected:
-        return "valid_rejected", "Expected-valid input was rejected"
+        return "valid_rejected", f"Expected-valid input was rejected; {signal}"
 
     if not expected_valid and accepted:
         return (
             "invalid_accepted",
-            "Expected-invalid input was accepted; potential validation inconsistency",
+            f"Expected-invalid input was accepted; {signal}",
         )
 
     if not expected_valid and rejected:
-        return "invalid_rejected", "Expected-invalid input was rejected"
+        return "invalid_rejected", f"Expected-invalid input was rejected; {signal}"
 
     return "unclear", "Could not confidently classify response"
