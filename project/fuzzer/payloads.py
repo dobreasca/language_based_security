@@ -1,5 +1,5 @@
 from __future__ import annotations
-
+from .grammar import is_valid_for_mode
 import random
 import string
 from typing import List
@@ -136,9 +136,9 @@ def generate_email_payloads(
                 Payload(
                     value=value,
                     mode="email",
-                    expected_valid=True,
+                    expected_valid=is_valid_for_mode("email", value),
                     strategy="grammar-valid",
-                    description="Valid email according to common web grammar",
+                    description="Valid email according to the regex grammar",
                 )
             )
 
@@ -147,7 +147,7 @@ def generate_email_payloads(
             Payload(
                 value=value,
                 mode="email",
-                expected_valid=False,
+                expected_valid=is_valid_for_mode("email", value),
                 strategy="grammar-mutated-invalid",
                 description="Email grammar boundary or parser disagreement case",
             )
@@ -175,7 +175,7 @@ def generate_param_payloads(
                 Payload(
                     value=value,
                     mode="params",
-                    expected_valid=True,
+                    expected_valid=is_valid_for_mode("params", value),
                     strategy="grammar-valid",
                     description="Valid HTTP query parameter pattern",
                 )
@@ -186,7 +186,7 @@ def generate_param_payloads(
             Payload(
                 value=value,
                 mode="params",
-                expected_valid=False,
+                expected_valid=is_valid_for_mode("params", value),
                 strategy="grammar-mutated-invalid",
                 description="HTTP parameter grammar edge case",
             )
@@ -214,7 +214,7 @@ def generate_upload_payloads(
                 Payload(
                     value=name,
                     mode="upload",
-                    expected_valid=True,
+                    expected_valid=is_valid_for_mode("upload", name),
                     strategy="grammar-valid",
                     description=f"Valid-looking upload filename and MIME type {mime}",
                     metadata={
@@ -230,7 +230,7 @@ def generate_upload_payloads(
             Payload(
                 value=name,
                 mode="upload",
-                expected_valid=False,
+                expected_valid=is_valid_for_mode("upload", name),
                 strategy="grammar-mutated-invalid",
                 description=f"Upload boundary case with MIME type {mime}",
                 metadata={

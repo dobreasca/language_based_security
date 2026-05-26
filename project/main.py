@@ -4,6 +4,7 @@ from fuzzer.cli import setup_cli
 from fuzzer.payloads import generate_payloads
 from fuzzer.report import print_summary, write_csv, write_json_summary
 from fuzzer.sender import parse_headers, send_payloads
+from fuzzer.grammar import get_grammar
 
 
 def main() -> None:
@@ -56,6 +57,10 @@ def main() -> None:
     print_summary(results)
     write_csv(results, args.csv)
     write_json_summary(results, args.json_summary)
+
+    grammar = get_grammar(args.mode)
+    print(f"[*] Grammar:      {grammar.name}")
+    print(f"[*] Regex:        {grammar.regex}")
 
     print(f"\nWrote CSV results to: {args.csv}")
     print(f"Wrote JSON summary to: {args.json_summary}")
