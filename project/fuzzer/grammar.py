@@ -17,8 +17,14 @@ class GrammarRule:
 
 EMAIL_GRAMMAR = GrammarRule(
     name="email",
-    regex=r"^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$",
-    description="Simplified web email grammar: local-part@domain.tld",
+    regex=(
+        r"^[A-Za-z0-9_%+-]+"
+        r"(?:\.[A-Za-z0-9_%+-]+)*"
+        r"@"
+        r"(?:[A-Za-z0-9](?:[A-Za-z0-9-]{0,61}[A-Za-z0-9])?\.)+"
+        r"[A-Za-z]{2,}$"
+    ),
+    description="Email grammar that disallows leading/trailing/consecutive dots and malformed domains",
 )
 
 
@@ -84,3 +90,26 @@ def get_grammar(mode: str) -> GrammarRule:
 def is_valid_for_mode(mode: str, value: str) -> bool:
     grammar = get_grammar(mode)
     return grammar.compile().fullmatch(value) is not None
+
+def is_valid_upload_payload(filename: str, mime_type: str, content: bytes) -> bool:
+    if not is_valid_for_mode("upload", filename):
+        return False
+
+    lowered = filename.lower()
+
+    if lowered.endswith(".png"):
+        return mime_type == "image/png" and content.startswith(b"\x89PNG")
+
+    if lowered.endswith(".jpg") or lowered.endswith(".jpeg"):
+        return mime_type == "image/jpeg" and content.startswith(b"\xff\xd8")
+
+    if lowered.endswith(".webp"):
+        return mime_type == "image/webp" and content.startswith(b"RIFF")
+
+    if lowered.endswith(".pdf"):
+        return mime_type == "application/pdf" and content.startswith(b"%PDF")
+
+    if lowered.endswith(".txt"):
+        return mime_type == "text/plain" and len(content) > 0
+
+    return False
