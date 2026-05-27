@@ -15,12 +15,6 @@ def strip_html_tags(html: str) -> str:
 
 
 def remove_invisible_or_irrelevant_blocks(html: str) -> str:
-    """
-    Remove HTML blocks that often contain unrelated validation strings,
-    translations, templates, JavaScript configs, or hidden UI messages.
-
-    This is intentionally general and not only PrestaShop-specific.
-    """
 
     patterns = [
         r"<script[\s\S]*?</script>",
@@ -39,10 +33,6 @@ def remove_invisible_or_irrelevant_blocks(html: str) -> str:
 
 
 def remove_hidden_elements(html: str) -> str:
-    """
-    Remove elements that are likely not visible to the user:
-    d-none, hidden, visually-hidden, aria-hidden, display:none.
-    """
 
     patterns = [
         r"<[^>]*(?:class=[\"'][^\"']*(?:d-none|hidden|visually-hidden)[^\"']*[\"'])[^>]*>[\s\S]*?</[^>]+>",
@@ -60,12 +50,6 @@ def remove_hidden_elements(html: str) -> str:
 
 
 def extract_alert_blocks(html: str) -> str:
-    """
-    Extract common alert/message blocks from frameworks and web apps.
-
-    This catches Bootstrap alerts, PrestaShop alerts, form errors,
-    success messages, validation messages, and role='alert' blocks.
-    """
 
     patterns = [
         r"<[^>]*role=[\"']alert[\"'][^>]*>[\s\S]*?</[^>]+>",
@@ -85,13 +69,6 @@ def extract_alert_blocks(html: str) -> str:
 
 
 def extract_region_around_field(html: str, field: str) -> str:
-    """
-    Try to extract the nearest form/section/div containing the fuzzed field.
-
-    Example:
-    If field='email', this tries to find the form that contains name='email'.
-    This is useful when a full page is returned after form submission.
-    """
 
     if not field:
         return ""
@@ -116,21 +93,18 @@ def extract_region_around_field(html: str, field: str) -> str:
 
     position = field_match.start()
 
-    # Prefer the nearest enclosing form.
     form_start = html.rfind("<form", 0, position)
     form_end = html.find("</form>", position)
 
     if form_start != -1 and form_end != -1:
         return html[form_start : form_end + len("</form>")]
 
-    # Then try nearest enclosing section.
     section_start = html.rfind("<section", 0, position)
     section_end = html.find("</section>", position)
 
     if section_start != -1 and section_end != -1:
         return html[section_start : section_end + len("</section>")]
 
-    # Then try a reasonable window around the field.
     start = max(0, position - 3000)
     end = min(len(html), position + 3000)
 
@@ -138,10 +112,6 @@ def extract_region_around_field(html: str, field: str) -> str:
 
 
 def extract_region_by_keywords(html: str, keywords: list[str]) -> str:
-    """
-    Extract a region around target-specific keywords, such as newsletter,
-    subscription, login, contact, search, cart, etc.
-    """
 
     lowered = html.lower()
 
@@ -177,15 +147,6 @@ def choose_relevant_region(
     mode: str = "",
     field: str = "",
 ) -> str:
-    """
-    Choose the most relevant response region for classification.
-
-    Priority:
-    1. Alert/message blocks from the full cleaned page.
-    2. Region around the fuzzed field.
-    3. Target-specific region by keywords.
-    4. Whole cleaned page as fallback.
-    """
 
     field_region = extract_region_around_field(html, field)
 
@@ -246,12 +207,6 @@ def clean_response_for_classification(
     mode: str = "",
     field: str = "",
 ) -> str:
-    """
-    General response cleaner.
-
-    It removes globally irrelevant blocks, tries to focus on the part of the
-    page related to the fuzzed field, then strips HTML to plain text.
-    """
 
     cleaned = remove_invisible_or_irrelevant_blocks(html)
     cleaned = remove_hidden_elements(cleaned)

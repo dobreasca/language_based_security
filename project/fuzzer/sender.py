@@ -32,19 +32,6 @@ def parse_headers(
 
 
 def parse_extra_fields(values: list[str]) -> dict[str, str]:
-    """
-    Converts CLI values like:
-
-        --extra-field action=0
-        --extra-field submitNewsletter=Subscribe
-
-    into:
-
-        {
-            "action": "0",
-            "submitNewsletter": "Subscribe"
-        }
-    """
 
     result: dict[str, str] = {}
 
@@ -95,10 +82,6 @@ def build_request(
 
     kwargs: dict = {}
 
-    # ============================================================
-    # QUERY PARAMETER FUZZING
-    # ============================================================
-
     if payload.mode == "params" and (
         method == "GET" or body_format == "query"
     ):
@@ -107,10 +90,6 @@ def build_request(
             kwargs,
             "<query string>",
         )
-
-    # ============================================================
-    # FILE UPLOAD FUZZING
-    # ============================================================
 
     if payload.mode == "upload":
         meta = payload.metadata or {}
@@ -135,18 +114,12 @@ def build_request(
         )
 
         return target, kwargs, request_body
-
-    # ============================================================
-    # JSON BODY
-    # ============================================================
-
+    
     if body_format == "json":
 
-        # Start with static fields
         body = extra_fields.copy()
 
-        # Strapi requires wrapping inside "data"
-        if target_type == "strapi":
+        if target_type == "ghost":
             body = {
                 "data": {
                     **body,
@@ -165,16 +138,10 @@ def build_request(
             json.dumps(body, ensure_ascii=False),
         )
 
-    # ============================================================
-    # FORM BODY
-    # ============================================================
-
     if body_format == "form":
 
-        # Start with static fields
         body = extra_fields.copy()
 
-        # Add fuzzed field
         body[field] = payload.value
 
         kwargs["data"] = body
@@ -185,10 +152,6 @@ def build_request(
             urlencode(body),
         )
 
-    # ============================================================
-    # RAW BODY
-    # ============================================================
-
     if body_format == "raw":
         kwargs["data"] = payload.value
 
@@ -197,10 +160,6 @@ def build_request(
             kwargs,
             payload.value,
         )
-
-    # ============================================================
-    # QUERY BODY
-    # ============================================================
 
     if body_format == "query":
         return (
