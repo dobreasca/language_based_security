@@ -35,24 +35,10 @@ HTTP_PARAM_GRAMMAR = GrammarRule(
 )
 
 
-POSITIVE_INTEGER_PARAM_GRAMMAR = GrammarRule(
-    name="positive_integer_parameter",
-    regex=r"^[A-Za-z_][A-Za-z0-9_]*=[1-9][0-9]*$",
-    description="HTTP parameter whose value should be a positive integer",
-)
-
-
 SAFE_FILENAME_GRAMMAR = GrammarRule(
     name="safe_filename",
     regex=r"^[A-Za-z0-9._-]+\.(txt|png|jpg|jpeg|webp|pdf)$",
     description="Safe upload filename grammar with restricted extensions",
-)
-
-
-SLUG_GRAMMAR = GrammarRule(
-    name="slug",
-    regex=r"^[a-z0-9]+(?:-[a-z0-9]+)*$",
-    description="URL-safe slug grammar",
 )
 
 
@@ -63,20 +49,11 @@ URL_GRAMMAR = GrammarRule(
 )
 
 
-TEXT_GRAMMAR = GrammarRule(
-    name="text",
-    regex=r"^[^\x00\r\n]{1,255}$",
-    description="Simple single-line text grammar without null bytes or newlines",
-)
-
-
 GRAMMARS = {
     "email": EMAIL_GRAMMAR,
     "params": HTTP_PARAM_GRAMMAR,
     "upload": SAFE_FILENAME_GRAMMAR,
-    "slug": SLUG_GRAMMAR,
     "url": URL_GRAMMAR,
-    "text": TEXT_GRAMMAR,
 }
 
 
