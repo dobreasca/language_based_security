@@ -6,8 +6,6 @@ from typing import Any, Dict, Optional
 
 @dataclass(frozen=True)
 class Payload:
-    """A generated test input plus its grammar expectation."""
-
     value: str
     mode: str
     expected_valid: bool
