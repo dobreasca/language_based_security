@@ -35,6 +35,13 @@ HTTP_PARAM_GRAMMAR = GrammarRule(
 )
 
 
+POSITIVE_INTEGER_PARAM_GRAMMAR = GrammarRule(
+    name="positive_integer_parameter",
+    regex=r"^[A-Za-z_][A-Za-z0-9_]*=[1-9][0-9]*$",
+    description="HTTP parameter whose value should be a positive integer",
+)
+
+
 SAFE_FILENAME_GRAMMAR = GrammarRule(
     name="safe_filename",
     regex=r"^[A-Za-z0-9._-]+\.(txt|png|jpg|jpeg|webp|pdf)$",
