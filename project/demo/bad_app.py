@@ -28,7 +28,7 @@ class DemoHandler(BaseHTTPRequestHandler):
 
         return b""
 
-    def do_POST(self) -> None:  # noqa: N802
+    def do_POST(self) -> None:
         parsed = urlparse(self.path)
 
         if parsed.path == "/registration":
@@ -57,8 +57,6 @@ class DemoHandler(BaseHTTPRequestHandler):
 
             email = str(data.get("email", ""))
 
-            # Deliberately weak server-side validation.
-            # This models a client/server validation disagreement.
             if SERVER_WEAK_EMAIL_REGEX.match(email):
                 return self.send_json(
                     201,
@@ -89,9 +87,6 @@ class DemoHandler(BaseHTTPRequestHandler):
                     },
                 )
 
-            # Minimal demo behavior:
-            # accept if multipart reaches server.
-            # This intentionally models weak upload validation.
             return self.send_json(
                 201,
                 {
@@ -108,7 +103,7 @@ class DemoHandler(BaseHTTPRequestHandler):
             },
         )
 
-    def do_GET(self) -> None:  # noqa: N802
+    def do_GET(self) -> None:
         parsed = urlparse(self.path)
 
         if parsed.path != "/search":
@@ -136,7 +131,6 @@ class DemoHandler(BaseHTTPRequestHandler):
                 },
             )
 
-        # Deliberately missing lower/upper bound checks.
         return self.send_json(
             200,
             {
