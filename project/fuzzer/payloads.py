@@ -3,9 +3,22 @@ from __future__ import annotations
 from .grammar import is_valid_for_mode, is_valid_upload_payload
 import random
 import string
+import base64
 from typing import List
 
 from .models import Payload
+
+TINY_PNG = base64.b64decode(
+    "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+/p9sAAAAASUVORK5CYII="
+)
+
+TINY_JPEG = base64.b64decode(
+    "/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAP//////////////////////////////////////////////////////////////////////////////////////2wBDAf//////////////////////////////////////////////////////////////////////////////////////wAARCAABAAEDASIAAhEBAxEB/8QAFQABAQAAAAAAAAAAAAAAAAAAAAX/xAAUEAEAAAAAAAAAAAAAAAAAAAAA/9oADAMBAAIQAxAAAAH/xAAUEAEAAAAAAAAAAAAAAAAAAAAA/9oACAEBAAEFAqf/xAAUEQEAAAAAAAAAAAAAAAAAAAAA/9oACAEDAQE/ASP/xAAUEQEAAAAAAAAAAAAAAAAAAAAA/9oACAECAQE/ASP/xAAUEAEAAAAAAAAAAAAAAAAAAAAA/9oACAEBAAY/Al//xAAUEAEAAAAAAAAAAAAAAAAAAAAA/9oACAEBAAE/IV//2gAMAwEAAgADAAAAEP/EFBQRAQAAAAAAAAAAAAAAAAAAABD/2gAIAQMBAT8QH//EFBQRAQAAAAAAAAAAAAAAAAAAABD/2gAIAQIBAT8QH//EFBABAQAAAAAAAAAAAAAAAAAAABD/2gAIAQEAAT8QH//Z"
+)
+
+TINY_WEBP = base64.b64decode(
+    "UklGRiIAAABXRUJQVlA4IBYAAAAwAQCdASoBAAEADsD+JaQAA3AAAAAA"
+)
 
 def random_ascii(rng: random.Random, min_len: int = 1, max_len: int = 40) -> str:
     alphabet = string.ascii_letters + string.digits + string.punctuation + " \t\n\r"
@@ -177,13 +190,13 @@ def fake_content_for_filename(filename: str) -> tuple[str, bytes]:
     lowered = filename.lower()
 
     if lowered.endswith(".png"):
-        return "image/png", b"\x89PNG\r\n\x1a\nminimal-png"
+        return "image/png", TINY_PNG
 
     if lowered.endswith(".jpg") or lowered.endswith(".jpeg"):
-        return "image/jpeg", b"\xff\xd8\xff\xe0minimal-jpeg"
+        return "image/jpeg", TINY_JPEG
 
     if lowered.endswith(".webp"):
-        return "image/webp", b"RIFFxxxxWEBP"
+        return "image/webp", TINY_WEBP
 
     if lowered.endswith(".pdf"):
         return "application/pdf", b"%PDF-1.4\nminimal-pdf"
@@ -218,6 +231,71 @@ def generate_random_invalid_upload(rng: random.Random) -> tuple[str, str, bytes]
 
     mutation = rng.choice(mutations)
     return mutation(valid_name)
+
+def random_ghost_image_filename(rng: random.Random) -> str:
+    alphabet = string.ascii_letters + string.digits + "._-"
+    length = rng.randint(3, 20)
+
+    base = ""
+    for _ in range(length):
+        base += rng.choice(alphabet)
+
+    base = base.strip("._-")
+
+    if base == "":
+        base = "image"
+
+    extension = rng.choice(["png", "jpg", "jpeg", "webp"])
+
+    return f"{base}.{extension}"
+
+
+def generate_random_valid_ghost_upload(rng: random.Random) -> tuple[str, str, bytes]:
+    filename = random_ghost_image_filename(rng)
+    mime, content = fake_content_for_filename(filename)
+    return filename, mime, content
+
+
+def generate_random_invalid_ghost_upload(rng: random.Random) -> tuple[str, str, bytes]:
+    valid_name = random_ghost_image_filename(rng)
+
+    mutations = [
+        lambda name: ("../" + name, "image/png", TINY_PNG),
+        lambda name: ("../../etc/passwd", "text/plain", b"root:x:0:0"),
+        lambda name: ("shell.php", "image/png", b"<?php echo 'owned'; ?>"),
+        lambda name: (name + ".php", "image/png", b"<?php echo 'owned'; ?>"),
+        lambda name: ("nullbyte.png\x00.php", "image/png", TINY_PNG),
+        lambda name: ("svg-script.svg", "image/svg+xml", b"<svg><script>alert(1)</script></svg>"),
+        lambda name: ("wrong-mime.jpg", "application/x-msdownload", b"MZfake"),
+        lambda name: ("fake-image.png", "image/png", b"not really a png"),
+        lambda name: ("fake-image.jpg", "image/jpeg", b"not really a jpeg"),
+        lambda name: ("empty.png", "image/png", b""),
+        lambda name: ("document.txt", "text/plain", b"hello world"),
+        lambda name: ("file with spaces.png", "image/png", TINY_PNG),
+        lambda name: ("unicode-例.png", "image/png", TINY_PNG),
+        lambda name: ("huge-" + ("a" * rng.randint(120, 260)) + ".png", "image/png", TINY_PNG),
+    ]
+
+    mutation = rng.choice(mutations)
+    return mutation(valid_name)
+
+GHOST_UPLOAD_VALID = [
+    ("ghost-image.png", "image/png", TINY_PNG),
+    ("ghost-photo.jpg", "image/jpeg", TINY_JPEG),
+    ("ghost-cover.webp", "image/webp", TINY_WEBP),
+]
+
+
+GHOST_UPLOAD_INVALID = [
+    ("shell.php", "image/png", b"<?php echo 'owned'; ?>"),
+    ("image.png.php", "image/png", b"<?php echo 'owned'; ?>"),
+    ("nullbyte.png\x00.php", "image/png", TINY_PNG),
+    ("document.txt", "text/plain", b"hello world"),
+    ("fake-image.png", "image/png", b"not really a png"),
+    ("wrong-mime.jpg", "application/x-msdownload", b"MZfake"),
+    ("svg-script.svg", "image/svg+xml", b"<svg><script>alert(1)</script></svg>"),
+    ("../../etc/passwd", "text/plain", b"root:x:0:0"),
+]
 
 EMAIL_VALID = [
     "alice@example.com",
@@ -474,6 +552,91 @@ def generate_param_payloads(
 
     return sample_or_extend(candidates, count, rng)
 
+def generate_ghost_upload_payloads(
+    count: int,
+    rng: random.Random,
+    include_valid: bool = True,
+) -> List[Payload]:
+    candidates: List[Payload] = []
+
+    if include_valid:
+        for name, mime, content in GHOST_UPLOAD_VALID:
+            candidates.append(
+                Payload(
+                    value=name,
+                    mode="upload",
+                    expected_valid=is_valid_upload_payload(name, mime, content),
+                    strategy="ghost-valid-seed",
+                    description=f"Ghost valid image upload seed; MIME type {mime}",
+                    metadata={
+                        "filename": name,
+                        "mime_type": mime,
+                        "content": content.hex(),
+                    },
+                )
+            )
+
+    for name, mime, content in GHOST_UPLOAD_INVALID:
+        candidates.append(
+            Payload(
+                value=name,
+                mode="upload",
+                expected_valid=is_valid_upload_payload(name, mime, content),
+                strategy="ghost-invalid-seed",
+                description=f"Ghost invalid image upload seed; MIME type {mime}",
+                metadata={
+                    "filename": name,
+                    "mime_type": mime,
+                    "content": content.hex(),
+                },
+            )
+        )
+
+    generated_valid_count = count // 3
+    generated_invalid_count = count // 3
+
+    if generated_valid_count < 1:
+        generated_valid_count = 1
+
+    if generated_invalid_count < 1:
+        generated_invalid_count = 1
+
+    if include_valid:
+        for _ in range(generated_valid_count):
+            name, mime, content = generate_random_valid_ghost_upload(rng)
+            candidates.append(
+                Payload(
+                    value=name,
+                    mode="upload",
+                    expected_valid=is_valid_upload_payload(name, mime, content),
+                    strategy="ghost-generated-valid",
+                    description=f"Random valid Ghost image upload; MIME type {mime}",
+                    metadata={
+                        "filename": name,
+                        "mime_type": mime,
+                        "content": content.hex(),
+                    },
+                )
+            )
+
+    for _ in range(generated_invalid_count):
+        name, mime, content = generate_random_invalid_ghost_upload(rng)
+        candidates.append(
+            Payload(
+                value=name,
+                mode="upload",
+                expected_valid=is_valid_upload_payload(name, mime, content),
+                strategy="ghost-generated-invalid",
+                description=f"Random invalid Ghost image upload; MIME type {mime}",
+                metadata={
+                    "filename": name,
+                    "mime_type": mime,
+                    "content": content.hex(),
+                },
+            )
+        )
+
+    return sample_or_extend(candidates, count, rng)
 
 def generate_upload_payloads(
     count: int,
@@ -583,7 +746,7 @@ def sample_or_extend(
                 Payload(
                     value=name,
                     mode="upload",
-                    expected_valid=is_valid_for_mode("upload", name),
+                    expected_valid=is_valid_upload_payload(name, mime, content),
                     strategy=base.strategy + "+generated-extra",
                     description="Extra generated upload payload",
                     metadata={
@@ -644,6 +807,7 @@ def generate_payloads(
     count: int,
     seed: int | None = None,
     include_valid: bool = True,
+    target_type: str = "generic",
 ) -> List[Payload]:
     rng = random.Random(seed)
 
@@ -654,6 +818,9 @@ def generate_payloads(
         return generate_param_payloads(count, rng, include_valid)
 
     if mode == "upload":
+        if target_type == "ghost":
+            return generate_ghost_upload_payloads(count, rng, include_valid)
+
         return generate_upload_payloads(count, rng, include_valid)
 
     raise ValueError(f"Unsupported mode: {mode}")

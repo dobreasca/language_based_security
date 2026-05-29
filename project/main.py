@@ -17,7 +17,10 @@ def main() -> None:
     print(f"[*] Payload Vol:   {args.count} tests")
     print(f"[*] HTTP Method:   {args.method}")
     print(f"[*] Body Format:   {args.body_format}")
-    print(f"[*] Field:         {args.field}")
+    if args.mode == "upload":
+        print(f"[*] Upload Field:  {args.upload_field}")
+    else:
+        print(f"[*] Field:         {args.field}")
     print(f"[*] Target Type:   {args.target_type}")
     print("-" * 60)
 
@@ -26,6 +29,7 @@ def main() -> None:
         count=args.count,
         seed=args.seed,
         include_valid=not args.invalid_only,
+        target_type=args.target_type,
     )
 
     if args.dry_run:
