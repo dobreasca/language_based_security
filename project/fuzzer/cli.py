@@ -95,6 +95,12 @@ def setup_cli() -> argparse.Namespace:
     )
 
     parser.add_argument(
+        "--invalid-only",
+        action="store_true",
+        help="Generate only invalid/boundary payloads, skipping valid controls",
+    )
+
+    parser.add_argument(
         "--insecure",
         action="store_true",
         help="Disable TLS certificate verification",
